@@ -9,16 +9,17 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 @Configuration
 class BatchConfig {
 
     @Bean
-    RestTemplate restTemplate() {
-        return new RestTemplate();
+    RestClient restClient() {
+        return RestClient.builder()
+                .baseUrl("https://data.weather.gov.hk/weatherAPI/opendata")
+                .build();
     }
-
 
     @Bean
     Step importRainfallStep(JobRepository jobRepository,

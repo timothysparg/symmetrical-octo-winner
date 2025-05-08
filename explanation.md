@@ -35,8 +35,9 @@ Key components:
 An ItemReader is responsible for providing data one item at a time from a source. In this application, `RainfallReader` implements the `ItemReader<RainfallData>` interface to fetch rainfall data from the Hong Kong Weather API.
 
 Key features:
-- Connects to the API endpoint using RestTemplate
-- Parses JSON response into RainfallData objects
+- Connects to the API endpoint using RestClient
+- Parses JSON response into RainfallData objects using Java streams
+- Uses Jackson annotations for direct mapping of API response fields
 - Maintains state between read operations
 - Returns null when all items have been read, signaling the end of available data
 
@@ -63,7 +64,7 @@ Spring Batch manages transactions to ensure data integrity during batch processi
 
 As illustrated in the diagram, the data flows through the system in the following sequence:
 
-1. **Fetch JSON Data**: The `RainfallReader` fetches rainfall data from the Hong Kong Weather API, converting the JSON response into `RainfallData` objects.
+1. **Fetch JSON Data**: The `RainfallReader` fetches rainfall data from the Hong Kong Weather API using RestClient, converting the JSON response into `RainfallData` objects with the help of Jackson annotations and Java streams.
 
 2. **Check if Data Exists/Changed**: The `ChangeDetectionProcessor` interacts with the `FileSystemRepository` to compare each incoming item with existing data:
    - If the item is new (not found in the repository), it's marked as new

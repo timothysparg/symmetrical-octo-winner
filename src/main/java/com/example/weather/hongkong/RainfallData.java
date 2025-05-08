@@ -2,12 +2,15 @@ package com.example.weather.hongkong;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class RainfallData {
+    @JsonProperty("automaticWeatherStationID")
     private String stationId;
 
+    @JsonProperty("automaticWeatherStation")
     private String stationName;
 
     private Double rainfallAmount;
@@ -21,4 +24,6 @@ public class RainfallData {
     // Flags to track record status
     private transient boolean isNew = false;
     private transient boolean isUpdated = false;
+
+    private String value;
 }
