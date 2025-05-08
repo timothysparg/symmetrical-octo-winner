@@ -1,0 +1,60 @@
+# Spring Batch Job components
+job: "rainfallSyncJob" {
+  style.fill: "#e6f3ff"
+  label: "Spring Batch Job"
+
+  step: "importRainfallStep" {
+    style.fill: "#d1e7ff"
+    label: "Chunk-based Step (size: 10)"
+
+    reader: "RainfallReader" {
+      style.fill: "#c2e0ff"
+      label: "ItemReader"
+    }
+
+    processor: "ChangeDetectionProcessor" {
+      style.fill: "#c2e0ff"
+      label: "ItemProcessor"
+    }
+
+    writer: "FileWriter" {
+      style.fill: "#c2e0ff"
+      label: "ItemWriter"
+    }
+
+    # Step flow
+    reader -> processor: "RainfallData objects"
+    processor -> writer: "Filtered RainfallData objects"
+  }
+}
+
+# External components
+api: "Hong Kong Weather API" {
+  style.fill: "#ffe6e6"
+}
+
+repo: "FileSystemRepository" {
+  style.fill: "#fff2e6"
+}
+
+fs: "File System Storage" {
+  style.fill: "#e6ffe6"
+
+  down: "work/down/hk/{stationId}.json" {
+    style.fill: "#d1ffd1"
+    label: "All data"
+  }
+
+  upstream: "work/upstream/hk/{stationId}.json" {
+    style.fill: "#d1ffd1"
+    label: "Only new/updated data"
+  }
+}
+
+# External data flow
+api -> job.step.reader: "1. Fetch JSON data"
+job.step.processor -> repo: "2. Check if data exists/changed"
+repo -> fs.down: "3. Read existing data"
+job.step.writer -> repo: "4. Write processed data"
+repo -> fs.down: "5a. Write ALL data"
+repo -> fs.upstream: "5b. Write NEW/UPDATED data only"
