@@ -26,7 +26,7 @@ class BatchConfig {
                                    PlatformTransactionManager transactionManager,
                                    RainfallReader reader,
                                    ChangeDetectionProcessor processor,
-                                   FileWriter writer) {
+                                   MongoWriter writer) {
         return new StepBuilder("importRainfallStep", jobRepository)
             .<RainfallData, RainfallData>chunk(10, transactionManager)
             .reader(reader)

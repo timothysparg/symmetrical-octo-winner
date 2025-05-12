@@ -9,13 +9,13 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 @Component
-class FileWriter implements ItemWriter<RainfallData> {
+class MongoWriter implements ItemWriter<RainfallData> {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileWriter.class);
-    private final FileSystemRepository repository;
+    private static final Logger logger = LoggerFactory.getLogger(MongoWriter.class);
+    private final RainfallDataRepository rainfallDataRepository;
 
-    public FileWriter(FileSystemRepository repository) {
-        this.repository = repository;
+    public MongoWriter(RainfallDataRepository rainfallDataRepository) {
+        this.rainfallDataRepository = rainfallDataRepository;
     }
 
     @Override
@@ -29,6 +29,6 @@ class FileWriter implements ItemWriter<RainfallData> {
                 logger.info("Updating rainfall data for station: {}", data.getStationId());
             }
         }
-        repository.saveAll(chunk.getItems());
+        rainfallDataRepository.saveAll(chunk.getItems());
     }
 }

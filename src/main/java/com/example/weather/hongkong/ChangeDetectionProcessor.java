@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
 class ChangeDetectionProcessor implements ItemProcessor<RainfallData, RainfallData> {
 
     private static final Logger log = LoggerFactory.getLogger(ChangeDetectionProcessor.class);
-    private final FileSystemRepository repository;
+    private final RainfallDataRepository rainfallDataRepository;
 
-    public ChangeDetectionProcessor(FileSystemRepository repository) {
-        this.repository = repository;
+    public ChangeDetectionProcessor(RainfallDataRepository rainfallDataRepository) {
+        this.rainfallDataRepository = rainfallDataRepository;
     }
 
     @Override
     public RainfallData process(RainfallData incomingData) {
-        Optional<RainfallData> existingData = repository.findByStationId(incomingData.getStationId());
+        Optional<RainfallData> existingData = rainfallDataRepository.findByStationId(incomingData.getStationId());
 
         if (existingData.isEmpty()) {
             // New data

@@ -7,15 +7,16 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.example.weather.hongkong.api.RainfallResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 @Component
-@Slf4j
 class RainfallReader implements ItemReader<RainfallData> {
 
+    private static final Logger logger = LoggerFactory.getLogger(RainfallReader.class);
     private final RestClient restClient;
     private final String apiPath;
     private List<RainfallData> rainfallDataList;
@@ -24,7 +25,7 @@ class RainfallReader implements ItemReader<RainfallData> {
     public RainfallReader(RestClient restClient) {
         this.restClient = restClient;
         this.apiPath = "/hourlyRainfall.php?lang=en";
-        log.info("RainfallReader initialized with API path: {}", apiPath);
+        logger.info("RainfallReader initialized with API path: {}", apiPath);
     }
 
     @Override
@@ -45,7 +46,7 @@ class RainfallReader implements ItemReader<RainfallData> {
     }
 
     private void fetchRainfallData() {
-        log.info("Fetching rainfall data from API path: {}", apiPath);
+        logger.info("Fetching rainfall data from API path: {}", apiPath);
         rainfallDataList = new ArrayList<>();
 
         try {
@@ -54,13 +55,13 @@ class RainfallReader implements ItemReader<RainfallData> {
                 .retrieve()
                 .body(RainfallResponse.class);
 
-            log.info("API response received successfully");
-            log.debug("API response body: {}", rainfallResponse);
+            logger.info("API response received successfully");
+            logger.debug("API response body: {}", rainfallResponse);
 
             // Parse ISO-8601 format (2025-05-08T01:45:00+08:00)
             LocalDateTime recordedAt = LocalDateTime.parse(rainfallResponse.getObservationTime(), DateTimeFormatter.ISO_DATE_TIME);
-            log.info("Last update time: {}", rainfallResponse.getObservationTime());
-            log.debug("Parsed time: {}", recordedAt);
+            logger.info("Last update time: {}", rainfallResponse.getObservationTime());
+            logger.debug("Parsed time: {}", recordedAt);
 
             List<RainfallData> stations = rainfallResponse.getHourlyRainfall().stream()
                 .map(station -> {
@@ -74,11 +75,11 @@ class RainfallReader implements ItemReader<RainfallData> {
                 })
                 .toList();
 
-            log.info("Found {} rainfall records", stations.size());
+            logger.info("Found {} rainfall records", stations.size());
             rainfallDataList.addAll(stations);
-            log.info("Processed {} rainfall data records", stations.size());
+            logger.info("Processed {} rainfall data records", stations.size());
         } catch (Exception e) {
-            log.error("Error fetching or parsing API response: {}", e.getMessage(), e);
+            logger.error("Error fetching or parsing API response: {}", e.getMessage(), e);
             throw new RuntimeException("Error fetching or parsing API response", e);
         }
     }
